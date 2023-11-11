@@ -46,7 +46,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run migrations
-      uses: migrate -path dir/migrations -database "postgresql://test:password@localhost:5432/test_db?sslmode=disable" --verbose up
+      uses: migrate -path ../../dir/migrations -database "postgresql://test:password@localhost:5432/test_db?sslmode=disable" --verbose up
   
 
     - name: Test
