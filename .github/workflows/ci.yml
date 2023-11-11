@@ -12,7 +12,27 @@ on:
 jobs:
 
   test:
+    name: Test
     runs-on: ubuntu-latest
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:14
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: auth_db
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v3
 
@@ -24,6 +44,10 @@ jobs:
 
     - name: Check out code into the Go molule directory
       uses: actions/checkout@v2
+
+    - name: Run migrations
+      uses: migrate -path dir/migrations -database "postgresql://test:password@localhost:5432/test_db?sslmode=disable" --verbose up
+  
 
     - name: Test
       run: go test -v -cover ./...
